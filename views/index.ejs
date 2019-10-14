@@ -10,9 +10,20 @@
     <form method = "post">
       Number of Arrays:
       <input name = "numArrays" type="text">
+      <br>
+      <select name="Sort" id="sort">
+        <option value="Bubble">Bubble</option>
+        <option value="Insertion">Insertion</option>
+      </select>
       <input type="submit">
     </form>
-    <p><%= sort %></p>
+    <br>
+    <div style = "width:20px; height:20px; background:#ff5c72; display: inline-block"></div> Swap
+    <div style = "width:20px; height:20px; background:#43c0ff; display: inline-block"></div> Comparisons
+
+    <h1>
+      <%= sortType %> Sort
+    </h1>
     <canvas id="myCanvas" width="1500" height="500" style="border:1px solid #000000;">
       <script>
         function draw() {
@@ -22,7 +33,9 @@
           for (var i = 0; i < arr.length; i += 1) {
             var ratio = c.width/arr.length
             var height = c.height/Math.max(...arr);
-            ctx.strokeRect(i*ratio, c.height, ratio, -arr[i] * height);
+            ctx.fillStyle = this._colors[i];
+            ctx.fillRect(i*ratio, c.height, ratio, -arr[i] * height);
+
           }
         }
         function bubblesort() {
@@ -31,19 +44,38 @@
             var x=[...this._arr];
             do {
               swapped = false;
-              for (var i=0; i < n; i++)
-              {
-                if (x[i] > x[i+1])
-                {
+              for (var i=0; i < n; i++){
+                if (x[i] > x[i+1]){
                   var temp = x[i];
                   x[i] = x[i+1];
                   x[i+1] = temp;
                   this._steps.push(['swap', i, i+1])
                   swapped = true;
                 }
+                else{
+                  this._steps.push(['compare', i, i+1])
+                }
               }
               n--;
             } while (swapped);
+        }
+        function insertion(){
+          var x = [...this._arr]
+          for(var i = 1; i < arr.length; i++){
+            var j = i;
+            while(x[j] < x[j-1]){
+              if(j == 0){
+                break;
+              }
+              var temp = x[j];
+              x[j] = x[j-1];
+              x[j-1] = temp;
+              this._steps.push(['swap', j-1, j])
+              j-=1;
+            }
+          }
+          console.log(x)
+          console.log(this._steps)
         }
         function stepThrough(){
           var step;
@@ -55,8 +87,17 @@
               var temp = this._arr[a];
               this._arr[a] = this._arr[b];
               this._arr[b] = temp;
+              this._colors[a] = "#ff5c72";
+              this._colors[b] = "#ff5c72";
+              break;
+            case 'compare':
+              this._colors[a] = "#43c0ff";
+              this._colors[b] = "#43c0ff";
+              break;
             }
           draw()
+          this._colors[a]="#e3e5ff";
+          this._colors[b]="#e3e5ff";
         }
         var arr = "<%= sort %>";
         arr = arr.split(",");
@@ -67,9 +108,19 @@
         var ctx = c.getContext("2d");
         this._steps = []
         this._arr = arr
+        this._colors = [];
+        for(var i = 0; i < arr.length; i++) {
+          this._colors.push("#e3e5ff");
+        }
         draw()
-
-        bubblesort();
+        switch("<%=sortType%>"){
+          case "Bubble":
+            bubblesort();
+            break;
+          case "Insertion":
+            insertion();
+            break;
+        }
         var sortSteps = setInterval(function(){
           if (this._steps.length == 1) {
             clearInterval(sortSteps);

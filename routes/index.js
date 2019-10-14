@@ -18,11 +18,11 @@ function generateRandom(max){
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express'});
+  res.render('index', { title: 'SORTING!'});
 });
 
 router.post('/', function(req, res, next) {
-  res.render('index', { title: 'Express', sort: generateRandom(parseInt(req.body.numArrays))});
+  res.render('index', { title: 'SORTING!', sort: generateRandom(parseInt(req.body.numArrays)), sortType: req.body.Sort});
 });
 
 module.exports = router;
