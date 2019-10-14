@@ -7,6 +7,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const bodyParser = require('body-parser');
+const ejsLint = require('ejs-lint');
+ejsLint.lint();
 var app = express();
 
 // view engine setup

@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <form method = "post">
+    <h1>Welcome to <%= title %></h1>
+    <form method = "post" action = "#">
       Number of Arrays:
-      <input name = "numArrays" type="text">
+      <input name = "numArrays" type="text" value="<%= numArrays %>">
       <br>
+      Type of Sort:
       <select name="Sort" id="sort">
         <option value="Bubble">Bubble</option>
         <option value="Insertion">Insertion</option>
       </select>
+      <br>
+      Sorting Speed:
+      <input name="Speed" type="text" value="<%= sortSpeed %>">ms
+      <br>
       <input type="submit">
     </form>
     <br>
+    <% if (typeof sortType != "undefined") { %>
     <div style = "width:20px; height:20px; background:#ff5c72; display: inline-block"></div> Swap
     <div style = "width:20px; height:20px; background:#43c0ff; display: inline-block"></div> Comparisons
 
     <h1>
       <%= sortType %> Sort
     </h1>
-    <canvas id="myCanvas" width="1500" height="500" style="border:1px solid #000000;">
+    <canvas id="myCanvas" width="1500" height="470" style="border:1px solid #000000;">
       <script>
         function draw() {
           var arr = this._arr;
@@ -35,7 +37,6 @@
             var height = c.height/Math.max(...arr);
             ctx.fillStyle = this._colors[i];
             ctx.fillRect(i*ratio, c.height, ratio, -arr[i] * height);
-
           }
         }
         function bubblesort() {
@@ -74,8 +75,6 @@
               j-=1;
             }
           }
-          console.log(x)
-          console.log(this._steps)
         }
         function stepThrough(){
           var step;
@@ -124,12 +123,20 @@
         var sortSteps = setInterval(function(){
           if (this._steps.length == 1) {
             clearInterval(sortSteps);
+            setTimeout(function(){
+              ctx.clearRect(0,0,c.width,c.height);
+              draw();
+            }, 500);
           }
           ctx.clearRect(0,0,c.width,c.height);
           stepThrough();
-        }, 500)
-
+        }, parseInt("<%= sortSpeed %>"))
       </script>
     </canvas>
+    <% } else {%>
+      <h1>
+        Choose a sorting algorithm
+      </h1>
+    <% } %>
   </body>
 </html>
