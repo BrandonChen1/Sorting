@@ -15,7 +15,8 @@
     <p><%= sort %></p>
     <canvas id="myCanvas" width="1500" height="500" style="border:1px solid #000000;">
       <script>
-        function draw(arr) {
+        function draw() {
+          var arr = this._arr;
           var c = document.getElementById("myCanvas");
           var ctx = c.getContext("2d");
           for (var i = 0; i < arr.length; i += 1) {
@@ -24,15 +25,58 @@
             ctx.strokeRect(i*ratio, c.height, ratio, -arr[i] * height);
           }
         }
-        var c = document.getElementById("myCanvas");
-        var ctx = c.getContext("2d");
+        function bubblesort() {
+            var swapped;
+            var n = this._arr.length-1;
+            var x=[...this._arr];
+            do {
+              swapped = false;
+              for (var i=0; i < n; i++)
+              {
+                if (x[i] > x[i+1])
+                {
+                  var temp = x[i];
+                  x[i] = x[i+1];
+                  x[i+1] = temp;
+                  this._steps.push(['swap', i, i+1])
+                  swapped = true;
+                }
+              }
+              n--;
+            } while (swapped);
+        }
+        function stepThrough(){
+          var step;
+          step = this._steps.shift()
+          var a = step[1];
+          var b = step[2];
+          switch(step[0]){
+            case 'swap':
+              var temp = this._arr[a];
+              this._arr[a] = this._arr[b];
+              this._arr[b] = temp;
+            }
+          draw()
+        }
         var arr = "<%= sort %>";
         arr = arr.split(",");
-        for(var i = 0; i < arr.length; i++){
+        for(var i = 0; i < arr.length; i++) {
           arr[i] = parseInt(arr[i]);
         }
-        console.log(arr);
-        draw(arr)
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        this._steps = []
+        this._arr = arr
+        draw()
+
+        bubblesort();
+        var sortSteps = setInterval(function(){
+          if (this._steps.length == 1) {
+            clearInterval(sortSteps);
+          }
+          ctx.clearRect(0,0,c.width,c.height);
+          stepThrough();
+        }, 500)
 
       </script>
     </canvas>
